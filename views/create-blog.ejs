@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<%- include('partials/head'); %>
+
+<body id="body">
+  <header>
+    <%- include('partials/header'); %>
+  </header>
+  <main>
+    <h1>Post a new blog</h1>
+    <form action="/blogs" method="POST">
+        <input type="text" name="title" placeholder="Title">
+        <input type="text" name="body" placeholder="Body">
+        <input type="text" name="snippet" placeholder="Snippet">
+        <input type="submit" value="Submit">   
+    </form>
+  </main>
+
+
+</html>

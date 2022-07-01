@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<%- include('partials/head'); %>
+
+<body id="body">
+  <header>
+    <%- include('partials/header'); %>
+  </header>
+  <main>
+    <% for (let i of blogs) { %>
+      <div style="color:Black;">
+        <h1><%= i.title %></h1>
+        <p><%= i.body %></p>
+        <p><%= i.snippet%></p>
+        <p><%= i.createdAt %></p>
+        <button class="delete-btn" data-doc="<%= i._id %>">Delete</button>
+      </div>
+      <% } %> 
+  </main>
+
+  <script>
+    document.querySelector('.delete-btn').addEventListener('click', function(e) {
+      e.preventDefault();
+      let id = e.target.dataset.doc;
+      fetch('/blogs/' + id, {
+        method: 'DELETE'
+      }).then(function(response) {
+        console.log(response);
+        window.location('/');
+      }).catch(function(error) {
+        console.log(error);
+      });
+    });
+  </script>
+</body>
+
+</html>
