@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<%- include('partials/head'); %>
+
+<body id="body">
+  <%- include('partials/header'); %>
+  <main>
+    <h1 class="heading">Register</h1>
+    <div class="blog-container">
+        <form action="/register" method="POST">
+            <input type="text" name="name" placeholder="Full Name">
+            <input type="email" name="email" placeholder="Email">
+            <input type="password" name="password" placeholder="Password">
+            <input type="submit" value="Submit">   
+        </form>
+  </main>
+
+</body>
+
+</html>

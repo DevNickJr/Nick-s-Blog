@@ -1,4 +1,3 @@
-const { tail } = require('lodash');
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 

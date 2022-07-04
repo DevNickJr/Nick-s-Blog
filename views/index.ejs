@@ -1,37 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
 
 <%- include('partials/head'); %>
 
 <body id="body">
-  <header>
-    <%- include('partials/header'); %>
-  </header>
+  <%- include('partials/header'); %>
   <main>
-    <% for (let i of blogs) { %>
-      <div style="color:Black;">
-        <h1><%= i.title %></h1>
-        <p><%= i.body %></p>
-        <p><%= i.snippet%></p>
-        <p><%= i.createdAt %></p>
-        <button class="delete-btn" data-doc="<%= i._id %>">Delete</button>
-      </div>
-      <% } %> 
+    <h1 class="heading">THE BLOG</h1>
+    <div class="blog-container">
+      <% for (let i of blogs) { %>
+        <div class="blog-div" style="color:Black;">
+          <h1><%= i.title %></h1>
+          <p><%= i.body %></p>
+          <p><%= i.snippet%></p>
+          <p><%= i.createdAt %></p>
+          <button class="delete-btn" data-doc="<%= i._id %>">Delete</button>
+        </div>
+        <% } %> 
+    </div>
   </main>
 
   <script>
-    document.querySelector('.delete-btn').addEventListener('click', function(e) {
-      e.preventDefault();
-      let id = e.target.dataset.doc;
-      fetch('/blogs/' + id, {
-        method: 'DELETE'
-      }).then(function(response) {
-        console.log(response);
-        window.location('/');
-      }).catch(function(error) {
-        console.log(error);
-      });
+    document.querySelectorAll('.delete-btn').forEach(el => {
+      el.addEventListener('click', function(e) {
+        console.log('clicked')
+        e.preventDefault();
+        let id = e.target.dataset.doc;
+        fetch('/blogs/' + id, {
+          method: 'DELETE'
+        }).then(function(response) {
+          return response.json()
+          })
+        .then(function(data) {
+          window.location.replace(data.redirect);
+        })
+        .catch(function(error) {
+          console.log('failed')
+          console.log(error);
+        });
+      })
     });
   </script>
 </body>

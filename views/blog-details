@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<%- include('partials/head'); %>
+
+<body id="body">
+  <%- include('partials/header'); %>
+  <main>
+    <h1 class="heading">THE BLOG</h1>
+    <div class="blog-container">
+      <% for (let i of blogs) { %>
+        <div class="blog-div" style="color:Black;">
+          <h1><%= i.title %></h1>
+          <p><%= i.body %></p>
+          <p><%= i.snippet%></p>
+          <p><%= i.createdAt %></p>
+          <button class="delete-btn" data-doc="<%= i._id %>">Delete</button>
+        </div>
+        <% } %> 
+  </main>
+</body>
+
+</html>
