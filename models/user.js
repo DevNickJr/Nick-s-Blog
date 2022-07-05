@@ -1,7 +1,12 @@
+const mongoose = require('mongoose');
 const Schema = require('mongoose').Schema;
 
 const userSchema = new Schema({
-    name: {
+    firstName: {
+        type: String,
+        required: true
+    },
+    lastName: {
         type: String,
         required: true
     },
@@ -14,8 +19,7 @@ const userSchema = new Schema({
         type: String,
         required: true,
         minlength: 8,
-        maxlength: 255,
-        select: false
+        maxlength: 255
     }
 },{timestamps: true});
 

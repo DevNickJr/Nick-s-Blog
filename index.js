@@ -12,7 +12,27 @@ app.use(express.urlencoded({extended:false}));
 
 const mongoose = require('mongoose');
 const Blog = require('./models/blog')
+const User = require('./models/user')
 const { render } = require('ejs')
+
+const bcrypt = require('bcrypt');
+const user = require('./models/user')
+
+const saltRounds = 10;
+const myPlaintextPassword = 's0/\/\P4$$w0rD';
+const someOtherPlaintextPassword = 'not_bacon';
+
+// bcrypt.genSalt(saltRounds, function(err, salt) {
+//   bcrypt.hash(myPlaintextPassword, salt, function(err, hash) {
+//     bcrypt.compare(myPlaintextPassword, hash, function(err, result) {
+//       console.log(result);
+//   });
+//   });
+// });
+
+
+
+
 
 app.set('view engine', 'ejs')
 
@@ -41,7 +61,7 @@ app.get('/', (req, res) => {
 app.get('/about', (req, res) => {
   res.render('about')
 })
-app.get('/blogs/', (req, res) => {
+app.get('/create-blogs', (req, res) => {
   res.render('create-blog', {title: 'Create Blog'})
 })
 app.post('/blogs', (req, res) => {
@@ -65,6 +85,47 @@ app.delete('/blogs/:id', (req, res) => {
     .then(result => {
       res.json({message: 'Blog deleted', redirect: '/'})
     }).catch(err => console.log(err))
+})
+app.get('/register', (req, res) => {
+  res.render('register', {title: 'Register'})
+})
+app.post('/register', (req, res) => {
+  let {firstName, lastName, email, password} = req.body
+  bcrypt.genSalt()
+  .then(salt => bcrypt.hash(password, salt))
+  .then(hash => {
+    password = hash; 
+    const user = new User({firstName, lastName, email, password})
+    user.save()
+    .then(result => {console.log('user saved'); res.redirect('/')})
+    .catch(err => {console.log('user failed', err); res.redirect('/register')})
+})
+  .catch(err => console.log('password encryption failed', err))
+ 
+
+})
+app.get('/login', (req, res) => {
+  res.render('login', {title: 'Login'})
+})
+app.post('/login', (req, res) => {
+  console.log(req.body)
+  const {email, password} = req.body
+  User.findOne({email})
+  .then(user => {
+    if(user) {
+      bcrypt.compare(password, user.password)
+        .then(result => {
+          if(result) {
+            res.redirect('/')
+          } else {
+            res.redirect('/login')
+          }
+        })
+      } else {
+      res.redirect('/login')
+    }
+  })
+  .catch(err => console.log(err))
 })
 
 app.use((req, res) => {
