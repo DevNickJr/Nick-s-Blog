@@ -70,7 +70,6 @@ const isAuth = (req, res, next) => {
 
 
 app.get('/', isAuth, (req, res) => {
-
   Blog.find()
     .then(blogs => {
       console.log(req.session.id)
