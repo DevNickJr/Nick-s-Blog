@@ -2,7 +2,7 @@ const express = require('express')
 const session = require('express-session')
 var MongoDBStore = require('connect-mongodb-session')(session)
 const app = express()
-const port =process.env.PORT || 3000
+const port =3000
 
 const dbURI = 'mongodb+srv://Nickjr:47313@cluster0.wivn8.mongodb.net/blog-site?retryWrites=true&w=majority'
 
