@@ -1,4 +1,6 @@
 const express = require('express')
+const session = require('express-session')
+var MongoDBStore = require('connect-mongodb-session')(session)
 const app = express()
 const port = 3000
 
@@ -18,18 +20,6 @@ const { render } = require('ejs')
 const bcrypt = require('bcrypt');
 const user = require('./models/user')
 
-const saltRounds = 10;
-const myPlaintextPassword = 's0/\/\P4$$w0rD';
-const someOtherPlaintextPassword = 'not_bacon';
-
-// bcrypt.genSalt(saltRounds, function(err, salt) {
-//   bcrypt.hash(myPlaintextPassword, salt, function(err, hash) {
-//     bcrypt.compare(myPlaintextPassword, hash, function(err, result) {
-//       console.log(result);
-//   });
-//   });
-// });
-
 
 
 
@@ -38,6 +28,26 @@ app.set('view engine', 'ejs')
 
 app.use(morgan('dev'))
 app.use(express.static('static'))
+var store = new MongoDBStore({
+  uri: dbURI,
+  collection: 'mySessions'
+});
+app.use(session({
+
+  // It holds the secret key for session
+  secret: 'Your_Secret_Key',
+
+  // Forces the session to be saved
+  // back to the session store
+  resave: false,
+
+  // Forces a session that is "uninitialized"
+  // to be saved to the store
+  saveUninitialized: false,
+  store: store
+})) 
+
+
 
 main().then(res => {
   console.log('success')
@@ -47,13 +57,23 @@ main().then(res => {
 }).catch(err => console.log('eerror', err));
 
 async function main() {
-  await mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true });
+  const connection = await mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true });
+}
+
+const isAuth = (req, res, next) => {
+  if (req.session.isAuth) {
+    next()
+  } else {
+    res.redirect('/login')
+  }
 }
 
 
-app.get('/', (req, res) => {
+app.get('/', isAuth, (req, res) => {
+
   Blog.find()
     .then(blogs => {
+      console.log(req.session.id)
       res.render('index', {title: 'Home Page', blogs: blogs})
     })
     .catch(err => console.log(err))
@@ -108,7 +128,6 @@ app.get('/login', (req, res) => {
   res.render('login', {title: 'Login'})
 })
 app.post('/login', (req, res) => {
-  console.log(req.body)
   const {email, password} = req.body
   User.findOne({email})
   .then(user => {
@@ -116,6 +135,7 @@ app.post('/login', (req, res) => {
       bcrypt.compare(password, user.password)
         .then(result => {
           if(result) {
+            req.session.isAuth = true
             res.redirect('/')
           } else {
             res.redirect('/login')
