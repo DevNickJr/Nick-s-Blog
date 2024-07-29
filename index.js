@@ -4,7 +4,7 @@ var MongoDBStore = require('connect-mongodb-session')(session)
 const app = express()
 const port =process.env.PORT || 3000
 
-const dbURI = 'mongodb+srv://Nickjr:47313@cluster0.wivn8.mongodb.net/blog-site?retryWrites=true&w=majority'
+const dbURI = process.env.MONGO_URI
 
 // middlewares
 const morgan = require('morgan')
